@@ -35,6 +35,8 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
+import static com.danielkkrafft.wilddungeons.WildDungeonsClient.delayedRegistry;
+
 @Mod(WildDungeons.MODID)
 public class WildDungeons {
     public static final String MODID = "wilddungeons";
@@ -59,6 +61,8 @@ public class WildDungeons {
         WDMobEffects.MOB_EFFECTS.register(modEventBus);
         WDAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         WDParticleTypes.PARTICLE_TYPES.register(modEventBus);
+        delayedRegistry();
+
 
         modEventBus.register(WildDungeons.class);
         NeoForge.EVENT_BUS.register(WDEvents.class);

@@ -121,33 +121,21 @@ configurations {
 dependencies {
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 
-/*
-    jarJar(implementation("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}")) {
-        exclude group: "maven.modrinth"
-        exclude group: "me.fallenbreath"
-    }
 
- */
+    compileOnly("curse.maven:sodium-394468:5957448")
+    compileOnly("curse.maven:irisshaders-455508:6213632")
+
+
 
 }
 
 repositories {
-    /*
-    maven {
-        name = 'BlameJared Maven (CrT / Bookshelf)'
-        url = 'https://maven.blamejared.com'
-    }
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
-    }
-    mavenCentral()
 
-
-     */
+    maven { url = "https://maven.theillusivec4.top/" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://modmaven.k-4u.nl"}
+    maven { url = "https://cursemaven.com" }
+    mavenLocal()
 
 }
 

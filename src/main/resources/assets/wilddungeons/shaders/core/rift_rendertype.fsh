@@ -1,7 +1,6 @@
 #version 150
 
 uniform float GameTime; // raw Minecraft time
-uniform int isSpecialEntity;
 
 in vec2 texCoord0;
 in vec4 vertexColor;
@@ -185,14 +184,14 @@ void main() {
     color = mix(emissionColor, vec3(fac), fac + 1.2);
 
     // === TRANSPARENCY FIX ===
-    float alpha = smoothstep(1.0, 0.55, radius*1.1);
-    float cir = smoothstep(1.0, 0.85, radius*1.8);
+    float alpha = smoothstep(1.0, 0.55, radius * 1.1);
+    float cir = smoothstep(1.0, 0.85, radius * 1.8);
 
     vec4 ccc = vec4(color, alpha);
 
     if (alpha <= 0.001) discard;
     if (cir <= 0.001) {
-    if (color.r >= 0.35 && color.g >= 0.35 && color.b >= 0.35) discard;
+        if (color.r >= 0.35 && color.g >= 0.35 && color.b >= 0.35) discard;
     }
 
     fragColor = ccc;

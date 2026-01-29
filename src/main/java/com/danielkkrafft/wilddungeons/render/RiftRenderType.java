@@ -1,5 +1,6 @@
 package com.danielkkrafft.wilddungeons.render;
 
+import com.danielkkrafft.wilddungeons.WildDungeons;
 import com.danielkkrafft.wilddungeons.registry.WDShaders;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -45,5 +46,9 @@ public class RiftRenderType extends RenderType {
 
     public static RenderType getRiftRenderType(ResourceLocation location) {
         return RIFT_RENDER_TYPE.apply(location);
+    }
+
+    public static RenderType getRiftRenderType() {
+        return RIFT_RENDER_TYPE.apply(ResourceLocation.fromNamespaceAndPath(WildDungeons.MODID,"textures/entity/rift/0001.png"));
     }
 }

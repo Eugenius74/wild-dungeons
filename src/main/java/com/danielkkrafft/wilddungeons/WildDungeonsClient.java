@@ -1,11 +1,14 @@
 package com.danielkkrafft.wilddungeons;
 
+import com.danielkkrafft.wilddungeons.api.client.DelayedRenderTypes;
+import com.danielkkrafft.wilddungeons.api.client.ShadersIntegration;
 import com.danielkkrafft.wilddungeons.entity.model.*;
 import com.danielkkrafft.wilddungeons.entity.renderer.*;
 import com.danielkkrafft.wilddungeons.registry.WDBlockEntities;
 import com.danielkkrafft.wilddungeons.registry.WDBlocks;
 import com.danielkkrafft.wilddungeons.registry.WDEntities;
 import com.danielkkrafft.wilddungeons.registry.WDFluids;
+import com.danielkkrafft.wilddungeons.render.RiftRenderType;
 import com.danielkkrafft.wilddungeons.util.CameraShakeUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -36,6 +39,11 @@ public class WildDungeonsClient {
     public static void initializeClient() {
         NeoForge.EVENT_BUS.addListener(WildDungeonsClient::onClientTick);
         NeoForge.EVENT_BUS.addListener(WildDungeonsClient::onCameraShake);
+    }
+
+    public static void delayedRegistry() {
+        ShadersIntegration.init();
+        //Any Delayed RenderTypes get registered Here
     }
 
     @SubscribeEvent

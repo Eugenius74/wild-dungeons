@@ -1,6 +1,8 @@
 package com.danielkkrafft.wilddungeons.entity.renderer;
 
 import com.danielkkrafft.wilddungeons.WildDungeons;
+import com.danielkkrafft.wilddungeons.api.client.LevelRenderHandler;
+import com.danielkkrafft.wilddungeons.api.client.ShadersIntegration;
 import com.danielkkrafft.wilddungeons.dungeon.components.template.DungeonPerkTemplate;
 import com.danielkkrafft.wilddungeons.entity.EssenceOrb;
 import com.danielkkrafft.wilddungeons.entity.Offering;
@@ -50,15 +52,9 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
     private static final ResourceLocation MESSAGE_BUBBLE_TEXTURE = WildDungeons.rl("textures/gui/sprites/hud/message_bubble.png");
     private static final ResourceLocation PERK_RING_TEXTURE = WildDungeons.rl("textures/gui/sprites/hud/perk_ring.png");
     private static final ResourceLocation ITEM_RING_TEXTURE = WildDungeons.rl("textures/gui/sprites/hud/item_ring.png");
-    private static final ResourceLocation PERKS_TEXTURE = WildDungeons.rl("textures/gui/sprites/hud/perks.png");
     private static final Vector2i MESSAGE_BUBBLE_TEXTURE_RESOLUTION = new Vector2i(48, 32);
-    private static final Vector2i PERKS_TEXTURE_RESOLUTION = new Vector2i(64, 64);
-    private static final ResourceLocation RIFT_TEXTURE = WildDungeons.rl("textures/entity/rift.png");
-    private static final AnimatedTexture RIFT_ANIMATION = AnimatedTexture.auto("textures/entity/rift", 100, 2);
-    private static final AnimatedTexture RIFT3_ANIMATION = AnimatedTexture.auto("textures/entity/rift3", 60, 1);
+    private static final AnimatedTexture RIFT_ANIMATION = AnimatedTexture.auto("textures/entity/rift", 60, 1);
     private static final AnimatedTexture RIFT_EFFECT_ANIMATION = AnimatedTexture.auto("textures/entity/rifteffect", 60, 1);
-
-    private static final AnimatedTexture RIFT_2_ANIMATION = AnimatedTexture.auto("textures/entity/rift2", 100, 2);
 
     private static final ResourceLocation EXPERIENCE_ORB_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/experience_orb.png");
 
@@ -75,8 +71,6 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
     private static final RenderType RENDER_TYPE_3 = RenderType.entityTranslucent(EXPERIENCE_ORB_LOCATION);
     private static final RenderType PERK_RING_RENDERTYPE = RenderType.entityCutout(PERK_RING_TEXTURE);
     private static final RenderType ITEM_RING_RENDERTYPE = RenderType.entityCutout(ITEM_RING_TEXTURE);
-    private static final RenderType PERK_RENDERTYPE = RenderType.entityCutout(PERKS_TEXTURE);
-    private static final RenderType RENDER_TYPE_6 = RenderType.itemEntityTranslucentCull(RIFT_TEXTURE);
 
 
 
@@ -95,7 +89,6 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
         poseStack.pushPose();
         poseStack.scale(entity.getRenderScale(), entity.getRenderScale(), entity.getRenderScale());
         if (entity.getRenderScale() <= 1) poseStack.translate(0.0f, 0.5f, 0.0f);
-
         switch (entity.getOfferingType()) {
             case ITEM -> renderItemModel(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
             case PERK -> renderPerk(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
@@ -103,17 +96,13 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
             case null, default -> {
             }
         }
-
         if (entity.getCostAmount() > 0) {
             renderBubble(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         }
-
         if (entity.isLookingAtMe(Minecraft.getInstance().player, 1.0)){
             ItemPreviewTooltipLayer.INSTANCE.setPreviewEntity(entity);
         }
-
         poseStack.popPose();
-
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
@@ -195,53 +184,15 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
     }
 
     public void renderRift(Offering entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        {
             poseStack.pushPose();
             poseStack.translate(0.0f, 0.5f, 0.0f);
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
             if (Minecraft.getInstance().player == null) return;
             float extraScaleFactor = (float) (2.5f - Math.min(entity.position().distanceTo(Minecraft.getInstance().player.position()) / 15.0f, 2.5f));
-            poseStack.scale(0.1F+extraScaleFactor, 0.1F+extraScaleFactor, 0.1F+extraScaleFactor);
-
-
-
-            //Custom Shader Version
-            if (WDShaders.RIFT_SHADER == null) return;
-            //RenderSystem.setShader(() -> WDShaders.RIFT_SHADER);
-            //VertexConsumer vertexconsumer = buffer.getBuffer(RiftRenderType.getRiftRenderType(RIFT_TEX));
-            //Vector3f pRGB = entity.getPrimaryColorRGB();
-            //Vector3f sRGB = entity.getSecondaryColorRGB();
-            //Vector3f bgRGB = entity.getBackgroundColorRGB();
-            //WDShaders.RIFT_SHADER.safeGetUniform("BGColor").set(bgRGB.x,bgRGB.y,bgRGB.z);
-            //WDShaders.RIFT_SHADER.safeGetUniform("PrimaryColor").set(pRGB.x,pRGB.y,pRGB.z);
-            //WDShaders.RIFT_SHADER.safeGetUniform("isSpecialEntity").set(1);
-
-            //Animated Texture Version
-            //RenderType rType = RiftRenderType.getRift(RIFT_TEX);
-
+            poseStack.scale(0.1F + extraScaleFactor, 0.1F + extraScaleFactor, 0.1F + extraScaleFactor);
 
             PoseStack.Pose posestack$pose = poseStack.last();
-            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.itemEntityTranslucentCull(RIFT3_ANIMATION.getCurrentFrame()));
-/*
-            if (rType != null) {
-                vertexconsumer = buffer.getBuffer(rType);
-            }
-
- */
-/*
-            RenderSystem.setShaderTexture(0, RIFT_TEX);
-            RenderSystem.setShader(() -> WDShaders.RIFT_SHADER);
-            Matrix4f matrix4f = posestack$pose.pose();
-            BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            bufferbuilder.addVertex(matrix4f, (float)-1.0f, (float)-1.0f, (float)0).setUv(0, 0).setColor(entity.getSecondaryColor());
-            bufferbuilder.addVertex(matrix4f, (float)1.0f, (float)-1.0f, (float)0).setUv(0, 1).setColor(entity.getSecondaryColor());
-            bufferbuilder.addVertex(matrix4f, (float)1.0f, (float)1.0f, (float)0).setUv(1, 1).setColor(entity.getSecondaryColor());
-            bufferbuilder.addVertex(matrix4f, (float)-1.0f, (float)1.0f, (float)0).setUv(1, 0).setColor(entity.getSecondaryColor());
-            BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-
-
- */
-
+            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.itemEntityTranslucentCull(RIFT_ANIMATION.getCurrentFrame()));
 
             vertex(vertexconsumer, posestack$pose, -1.0f, -1.0f, 0.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
             vertex(vertexconsumer, posestack$pose, 1.0f, -1.0f, 1.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
@@ -249,10 +200,8 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
             vertex(vertexconsumer, posestack$pose, -1.0f, 1.0f, 0.0f, 0.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
 
 
-
             poseStack.translate(0.0f, 0.0f, 0.001f);
-            poseStack.mulPose(Axis.ZN.rotationDegrees(-(entity.tickCount+partialTicks)));
-
+            poseStack.mulPose(Axis.ZN.rotationDegrees(-(entity.tickCount + partialTicks)));
 
             vertexconsumer = buffer.getBuffer(RenderType.breezeEyes(RIFT_EFFECT_ANIMATION.getCurrentFrame()));
 
@@ -261,12 +210,8 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
             vertex(vertexconsumer, posestack$pose, 1.0f, 1.0f, 1.0f, 0.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
             vertex(vertexconsumer, posestack$pose, -1.0f, 1.0f, 0.0f, 0.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
 
-
-
-
-
             poseStack.popPose();
-        }
+
     }
 
     public void renderPerkRing(PoseStack poseStack, Offering entity, float partialTicks, MultiBufferSource buffer, float radius) {
