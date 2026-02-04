@@ -1,0 +1,12 @@
+{
+  "renderStage": "after_level",
+  "stages": [
+    {
+      "type": "veil:blit",
+      "shader": "wilddungeons:rift",
+      "in": "minecraft:main",
+      "out": "veil:post",
+      "clear": true
+    }
+  ]
+}

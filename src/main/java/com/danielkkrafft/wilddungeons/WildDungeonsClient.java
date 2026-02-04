@@ -1,6 +1,5 @@
 package com.danielkkrafft.wilddungeons;
 
-import com.danielkkrafft.wilddungeons.api.client.DelayedRenderTypes;
 import com.danielkkrafft.wilddungeons.api.client.ShadersIntegration;
 import com.danielkkrafft.wilddungeons.entity.model.*;
 import com.danielkkrafft.wilddungeons.entity.renderer.*;
@@ -8,8 +7,9 @@ import com.danielkkrafft.wilddungeons.registry.WDBlockEntities;
 import com.danielkkrafft.wilddungeons.registry.WDBlocks;
 import com.danielkkrafft.wilddungeons.registry.WDEntities;
 import com.danielkkrafft.wilddungeons.registry.WDFluids;
-import com.danielkkrafft.wilddungeons.render.RiftRenderType;
 import com.danielkkrafft.wilddungeons.util.CameraShakeUtil;
+import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.post.PostProcessingManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import java.awt.*;
 
 import static com.danielkkrafft.KeyBindings.TOGGLE_ESSENCE_TYPE;
+import static com.danielkkrafft.wilddungeons.WildDungeons.MODID;
 
 @EventBusSubscriber(modid = "wilddungeons", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class WildDungeonsClient {
@@ -90,6 +92,13 @@ public class WildDungeonsClient {
 
 
         event.registerBlockEntityRenderer(WDBlockEntities.TOXIC_GAS_ENTITY.get(), GasBlockRenderer::new);
+
+    }
+
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        PostProcessingManager postManager = VeilRenderSystem.renderer().getPostProcessingManager();
+        postManager.add(ResourceLocation.fromNamespaceAndPath(MODID,"riftposteffect"));
 
     }
 

@@ -1,19 +1,14 @@
 package com.danielkkrafft.wilddungeons.entity.renderer;
 
 import com.danielkkrafft.wilddungeons.WildDungeons;
-import com.danielkkrafft.wilddungeons.api.client.LevelRenderHandler;
-import com.danielkkrafft.wilddungeons.api.client.ShadersIntegration;
 import com.danielkkrafft.wilddungeons.dungeon.components.template.DungeonPerkTemplate;
 import com.danielkkrafft.wilddungeons.entity.EssenceOrb;
 import com.danielkkrafft.wilddungeons.entity.Offering;
 import com.danielkkrafft.wilddungeons.player.WDPlayer;
 import com.danielkkrafft.wilddungeons.player.WDPlayerManager;
-import com.danielkkrafft.wilddungeons.registry.WDShaders;
 import com.danielkkrafft.wilddungeons.render.AnimatedTexture;
-import com.danielkkrafft.wilddungeons.render.RiftRenderType;
 import com.danielkkrafft.wilddungeons.ui.ItemPreviewTooltipLayer;
 import com.danielkkrafft.wilddungeons.util.ColorUtil;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -35,11 +30,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
-import java.awt.*;
 import java.util.HexFormat;
 
 @OnlyIn(Dist.CLIENT)
@@ -57,6 +49,9 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
     private static final AnimatedTexture RIFT_EFFECT_ANIMATION = AnimatedTexture.auto("textures/entity/rifteffect", 60, 1);
 
     private static final ResourceLocation EXPERIENCE_ORB_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/experience_orb.png");
+
+    private static final ResourceLocation FBO = WildDungeons.rl("riftbuffer");
+
 
     static RenderType.CompositeState rendertype$compositestate = RenderType.CompositeState.builder()
             .setShaderState(RenderType.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
@@ -184,6 +179,7 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
     }
 
     public void renderRift(Offering entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+
             poseStack.pushPose();
             poseStack.translate(0.0f, 0.5f, 0.0f);
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
@@ -192,7 +188,7 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
             poseStack.scale(0.1F + extraScaleFactor, 0.1F + extraScaleFactor, 0.1F + extraScaleFactor);
 
             PoseStack.Pose posestack$pose = poseStack.last();
-            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.itemEntityTranslucentCull(RIFT_ANIMATION.getCurrentFrame()));
+            VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutout(RIFT_ANIMATION.getCurrentFrame()));
 
             vertex(vertexconsumer, posestack$pose, -1.0f, -1.0f, 0.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
             vertex(vertexconsumer, posestack$pose, 1.0f, -1.0f, 1.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
@@ -202,8 +198,7 @@ public class OfferingRenderer extends EntityRenderer<Offering> {
 
             poseStack.translate(0.0f, 0.0f, 0.001f);
             poseStack.mulPose(Axis.ZN.rotationDegrees(-(entity.tickCount + partialTicks)));
-
-            vertexconsumer = buffer.getBuffer(RenderType.breezeEyes(RIFT_EFFECT_ANIMATION.getCurrentFrame()));
+            vertexconsumer = buffer.getBuffer(RenderType.entityCutout(RIFT_EFFECT_ANIMATION.getCurrentFrame()));
 
             vertex(vertexconsumer, posestack$pose, -1.0f, -1.0f, 0.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());
             vertex(vertexconsumer, posestack$pose, 1.0f, -1.0f, 1.0f, 1.0f, 0xF000F0, 1.0f, entity.getSecondaryColor());

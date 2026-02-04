@@ -55,6 +55,7 @@ public class LevelRenderHandler {
             for (RenderType renderType : DelayedRenderTypes.ADDITIVE_PARTICLES) endBatch(renderType);
         }
     }
+
     public static void shadersDelayedRender(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
             copyDepthBuffer(DEPTH_CACHE);

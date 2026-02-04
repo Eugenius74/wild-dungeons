@@ -125,7 +125,10 @@ dependencies {
     compileOnly("curse.maven:sodium-394468:5957448")
     compileOnly("curse.maven:irisshaders-455508:6213632")
 
-
+    jarJar(implementation("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}")) {
+        exclude group: "maven.modrinth"
+        exclude group: "me.fallenbreath"
+    }
 
 }
 
@@ -135,6 +138,8 @@ repositories {
     maven { url = "https://maven.blamejared.com" }
     maven { url = "https://modmaven.k-4u.nl"}
     maven { url = "https://cursemaven.com" }
+    maven { url = "https://api.modrinth.com/maven" }
+
     mavenLocal()
 
 }
